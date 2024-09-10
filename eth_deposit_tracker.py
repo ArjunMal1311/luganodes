@@ -67,26 +67,26 @@ async def process_transaction(tx, block):
     
     logger.info(f"New transaction: {json.dumps(transaction, indent=2)}")
     
-    # await send_telegram_notification(transaction, is_deposit=False)
+    await send_telegram_notification(transaction, is_deposit=False)
 
-# async def send_telegram_notification(data, is_deposit=True):
-#     if is_deposit:
-#         message = f"New ETH deposit detected:\n\nBlock: {data['blockNumber']}\nTimestamp: {data['blockTimestamp']}\nHash: {data['hash']}\nPubkey: {data['pubkey']}"
-#     else:
-#         message = f"New transaction detected:\n\nBlock: {data['blockNumber']}\nTimestamp: {data['blockTimestamp']}\nFrom: {data['from']}\nTo: {data['to']}\nValue: {data['value']} ETH\nHash: {data['hash']}"
+async def send_telegram_notification(data, is_deposit=True):
+    if is_deposit:
+        message = f"New ETH deposit detected:\n\nBlock: {data['blockNumber']}\nTimestamp: {data['blockTimestamp']}\nHash: {data['hash']}\nPubkey: {data['pubkey']}"
+    else:
+        message = f"New transaction detected:\n\nBlock: {data['blockNumber']}\nTimestamp: {data['blockTimestamp']}\nFrom: {data['from']}\nTo: {data['to']}\nValue: {data['value']} ETH\nHash: {data['hash']}"
     
-#     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-#     params = {
-#         "chat_id": TELEGRAM_CHAT_ID,
-#         "text": message
-#     }
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    params = {
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": message
+    }
     
-#     async with aiohttp.ClientSession() as session:
-#         async with session.get(url, params=params) as response:
-#             if response.status == 200:
-#                 logger.info("Telegram notification sent successfully")
-#             else:
-#                 logger.error(f"Failed to send Telegram notification: {await response.text()}")
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, params=params) as response:
+            if response.status == 200:
+                logger.info("Telegram notification sent successfully")
+            else:
+                logger.error(f"Failed to send Telegram notification: {await response.text()}")
 
 async def main():
     global transaction_count
@@ -104,7 +104,7 @@ async def main():
             await asyncio.sleep(15)  # Wait for 15 seconds before the next check
         except Exception as e:
             logger.error(f"An error occurred: {str(e)}")
-            await asyncio.sleep(60)  # Wait for 60 seconds if an error occurs
+            await asyncio.sleep(60) 
 
 if __name__ == "__main__":
     asyncio.run(main())
